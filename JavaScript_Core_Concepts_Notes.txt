@@ -1,0 +1,219 @@
+1. IF CONFIG VALUES ARE USED BEFORE LOADING IN AUTOMATION FRAMEWORK, EXECUTION MAY FAIL
+
+**Meaning:**
+If the framework tries to use config values before reading the config file, execution may fail.
+
+**Simple Example:**
+Config File:
+url = https://testleaf.com
+browser = chrome
+
+**Suppose Wrong Flow:**
+1. Launch browser
+2. Use URL immediately
+3. Config not loaded yet
+
+**Result:**
+url = undefined
+Execution fails
+
+**Correct Flow:**
+1. Load config file
+2. Read values
+3. Start execution
+
+**Usually Config Values:**
+- URL
+- Browser
+- Username
+- Password
+- Timeout
+- Environment
+
+**One-line Meaning:**
+Load config first, then use values.
+
+
+
+2. USE CONST FOR URLS AND CONFIG VALUES. USE LET FOR CHANGING RUNTIME VALUES
+
+**Meaning:**
+Use const for fixed values. Use let for values that may change during runtime.
+
+**Simple Example:**
+const baseURL = "https://testleaf.com"
+const browser = "chrome"
+
+let token = ""
+let retryCount = 0
+
+**Suppose Wrong Flow:**
+const token = ""
+token = "abc123"
+
+**Result:**
+Error because const cannot be reassigned.
+
+**Correct Flow:**
+let token = ""
+token = "abc123"
+
+**Usually const Values:**
+- URL
+- Browser
+- Timeout
+- File Paths
+
+**Usually let Values:**
+- Token
+- Dynamic ID
+- Counter
+- Status
+
+**One-line Meaning:**
+Use const for fixed values, let for changing values.
+
+
+
+3. TOKEN VARIABLE USED BEFORE ASSIGNMENT CAN FAIL LOGIN FLOW
+
+**Meaning:**
+If token is used before assigning actual value, authentication may fail.
+
+**Simple Example:**
+let token
+
+Authorization: Bearer undefined
+
+**Suppose Wrong Flow:**
+1. Declare token
+2. Use token in request
+3. Token not assigned yet
+
+**Result:**
+401 Unauthorized
+
+**Correct Flow:**
+1. Generate token
+2. Store token
+3. Use token in request
+
+**Usually Token Comes From:**
+- Login API
+- OAuth
+- Storage State
+- Session Response
+
+**One-line Meaning:**
+Assign token first, then use it.
+
+
+
+4. == COMPARES VALUES AFTER TYPE CONVERSION
+
+**Meaning:**
+Double equal compares values after converting datatype automatically.
+
+**Simple Example:**
+5 == "5" = true
+
+**Suppose Wrong Flow:**
+let status = "200"
+
+if(status == 200)
+
+**Result:**
+true because string converted into number
+
+**Correct Flow:**
+if(status === 200)
+
+**Result:**
+false because datatype is different
+
+**Usually Risks:**
+- API status code compare
+- Boolean compare
+- Null compare
+
+**One-line Meaning:**
+== checks equality after datatype conversion.
+
+
+
+5. TWO API RESPONSES MAY HAVE SAME DATA BUT DIFFERENT OBJECT REFERENCES
+
+**Meaning:**
+Two objects may have same content but different memory references.
+
+**Simple Example:**
+let a = {id:1}
+let b = {id:1}
+
+a === b = false
+
+**Suppose Wrong Flow:**
+Compare objects directly
+
+**Result:**
+false
+
+**Correct Flow:**
+a.id === b.id
+
+OR
+
+JSON.stringify(a) === JSON.stringify(b)
+
+**Usually Used In:**
+- API response validation
+- Expected vs Actual JSON
+- Object comparison
+
+**One-line Meaning:**
+Same data does not mean same reference.
+
+
+
+6. JAVASCRIPT RUNS ONE TASK AT A TIME USING CALL STACK
+
+**Meaning:**
+JavaScript executes functions one by one using Call Stack.
+
+**Simple Example:**
+login()
+createLead()
+logout()
+
+**Suppose Wrong Flow:**
+Assume all functions run together
+
+**Result:**
+Wrong understanding
+
+**Correct Flow:**
+1. login()
+2. createLead()
+3. logout()
+
+**Execution Flow (Call Stack):**
+push login()
+run login()
+pop login()
+
+push createLead()
+run createLead()
+pop createLead()
+
+push logout()
+run logout()
+pop logout()
+
+**Usually Call Stack Handles:**
+- Function calls
+- Nested methods
+- Execution order
+
+**One-line Meaning:**
+JavaScript runs tasks sequentially using Call Stack.
+```

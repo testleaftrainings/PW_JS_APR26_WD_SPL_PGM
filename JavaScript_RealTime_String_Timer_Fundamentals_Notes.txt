@@ -1,0 +1,141 @@
+JavaScript_RealTime_String_Timer_Fundamentals_Notes.txt
+
+1. Website shows " Welcome Testleaf ". Remove spaces before validation.
+
+Explanation:
+trim() removes spaces from beginning and end of string.
+
+Answer:
+let text = " Welcome Testleaf ";
+console.log(text.trim());
+
+Output:
+Testleaf
+
+
+2. Website shows "Order ID: ORD45678". Extract only Order ID.
+
+Explanation:
+replace() removes unwanted label text.
+
+Answer:
+let text = "Order ID: ORD45678";
+console.log(text.replace("Order ID: ",""));
+
+Output:
+ORD45678
+
+
+3. Website shows "Price: ₹45,999". Extract amount only.
+
+Explanation:
+replace() removes label text.
+replaceAll() removes commas.
+
+Answer:
+let text = "Price: ₹45,999";
+let price = text.replace("Price: ₹","").replaceAll(",","");
+console.log(price);
+
+Output:
+45999
+
+
+4. Website shows "Chennai - 34°C". Extract city name only.
+
+Explanation:
+split("-") separates values.
+First part gives city name.
+
+Answer:
+let text = "Chennai - 34°C";
+let city = text.split("-")[0].trim();
+console.log(city);
+
+Output:
+Chennai
+
+
+5. Website shows "Your OTP is 458921". Extract OTP number.
+
+Explanation:
+substring() extracts text from given index.
+
+Answer:
+let text = "Your OTP is 458921";
+console.log(text.substring(12));
+
+Output:
+458921
+
+
+6. Website shows "Welcome Admin". Check Admin word exists.
+
+Explanation:
+includes() checks whether text exists or not.
+
+Answer:
+let text = "Welcome Admin";
+console.log(text.includes("Admin"));
+
+Output:
+true
+
+
+7. Website shows "Status | Delivered". Extract Delivered text.
+
+Explanation:
+split("|") separates values.
+Second value gives status.
+
+Answer:
+let text = "Status | Delivered";
+console.log(text.split("|")[1].trim());
+
+Output:
+Delivered
+
+
+8. UI returns "500" and expected value is 500. Compare safely.
+
+Explanation:
+=== checks value and datatype.
+
+Answer:
+let ui = "500";
+let expected = 500;
+
+console.log(ui == expected);
+console.log(ui === expected);
+
+Output:
+true
+false
+
+
+9. Need loading message after 3 seconds.
+
+Explanation:
+setTimeout() runs code after delay.
+
+Answer:
+setTimeout(() => {
+ console.log("Loading Completed");
+}, 3000);
+
+Output:
+Loading Completed
+
+
+10. Need timer updating every second.
+
+Explanation:
+setInterval() runs repeatedly in given time interval.
+
+Answer:
+setInterval(() => {
+ console.log("Running...");
+}, 1000);
+
+Output:
+Running... every second

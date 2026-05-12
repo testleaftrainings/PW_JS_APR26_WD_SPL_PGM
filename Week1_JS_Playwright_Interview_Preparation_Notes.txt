@@ -1,0 +1,301 @@
+WEEK 1 - JAVASCRIPT INTERVIEW PREPARATION NOTES
+
+============================================================
+QUESTION 1: WHAT IS HOISTING IN JAVASCRIPT?
+============================================================
+
+THEORY ANSWER:
+**Hoisting** is JavaScript's default behavior where variable and function declarations are processed before execution starts.
+
+**var** is hoisted and initialized as **undefined**.
+**let** and **const** are hoisted but remain inside **Temporal Dead Zone (TDZ)** until declaration.
+
+EXAMPLE PROGRAM:
+
+console.log(a);
+var a = 10;
+
+console.log(b);
+let b = 20;
+
+OUTPUT:
+
+undefined
+ReferenceError
+
+PROGRAM EXPLANATION:
+- var can be accessed before declaration with undefined
+- let cannot be accessed before declaration
+
+REAL-TIME SCENARIO:
+If config values are used before loading in automation framework, execution may fail.
+
+QUICK ANSWER:
+var gives undefined, let/const give error before declaration.
+
+
+============================================================
+QUESTION 2: DIFFERENCE BETWEEN var, let, const
+============================================================
+
+THEORY ANSWER:
+**var** = function scoped, redeclare allowed
+**let** = block scoped, reassign allowed
+**const** = block scoped, fixed value
+
+EXAMPLE PROGRAM:
+
+if(true){
+ var a = 1;
+ let b = 2;
+ const c = 3;
+}
+
+console.log(a);
+
+OUTPUT:
+
+1
+
+PROGRAM EXPLANATION:
+Only var is accessible outside block.
+
+REAL-TIME SCENARIO:
+Use const for URLs and config values.
+Use let for changing runtime values.
+
+QUICK ANSWER:
+Use let for changing values, const for fixed values.
+
+
+============================================================
+QUESTION 3: WHAT IS TDZ?
+============================================================
+
+THEORY ANSWER:
+**Temporal Dead Zone (TDZ)** is the time between hoisting and declaration of let/const variables.
+
+EXAMPLE PROGRAM:
+
+console.log(user);
+let user = "Admin";
+
+OUTPUT:
+
+ReferenceError
+
+PROGRAM EXPLANATION:
+Variable exists internally but locked until declaration.
+
+REAL-TIME SCENARIO:
+Token variable used before assignment can fail login flow.
+
+QUICK ANSWER:
+TDZ means let/const cannot be used before declaration.
+
+
+============================================================
+QUESTION 4: DIFFERENCE BETWEEN == AND ===
+============================================================
+
+THEORY ANSWER:
+**==** compares values after type conversion.
+**===** compares value + datatype exactly.
+
+EXAMPLE PROGRAM:
+
+console.log(5 == "5");
+console.log(5 === "5");
+
+OUTPUT:
+
+true
+false
+
+PROGRAM EXPLANATION:
+== converts string into number automatically.
+
+REAL-TIME SCENARIO:
+UI returns "500", expected value is 500.
+Use === for accurate validation.
+
+QUICK ANSWER:
+Always prefer === in testing.
+
+
+============================================================
+QUESTION 5: HOW trim() HELPS IN AUTOMATION
+============================================================
+
+THEORY ANSWER:
+**trim()** removes extra spaces from start and end of text.
+
+EXAMPLE PROGRAM:
+
+let name = " Admin ";
+console.log(name.trim());
+
+OUTPUT:
+
+Admin
+
+PROGRAM EXPLANATION:
+Spaces removed before validation.
+
+REAL-TIME SCENARIO:
+Copied usernames or labels may contain hidden spaces.
+
+QUICK ANSWER:
+trim() removes unwanted spaces.
+
+
+============================================================
+QUESTION 6: USE OF replace() AND replaceAll()
+============================================================
+
+THEORY ANSWER:
+**replace()** changes first match only.
+**replaceAll()** changes all matches.
+
+EXAMPLE PROGRAM:
+
+let price = "₹25,999";
+console.log(price.replace("₹","").replaceAll(",",""));
+
+OUTPUT:
+
+25999
+
+PROGRAM EXPLANATION:
+Currency symbol and commas removed.
+
+REAL-TIME SCENARIO:
+Useful in price validation and invoice amount checks.
+
+QUICK ANSWER:
+Use replaceAll() for multiple matches.
+
+
+============================================================
+QUESTION 7: HOW TO HANDLE DYNAMIC TEXT FROM UI
+============================================================
+
+THEORY ANSWER:
+**Dynamic text** means UI content that changes during runtime like username, OTP, order ID, location, date, status.
+
+Use **split()**, **replace()**, **trim()** to extract exact values.
+
+EXAMPLE PROGRAM:
+
+let text = "Your location Chennai - 34°C";
+let city = text.replace("Your location ","").split("-")[0].trim();
+
+console.log(city);
+
+OUTPUT:
+
+Chennai
+
+PROGRAM EXPLANATION:
+Removed label, split by dash, extracted city.
+
+REAL-TIME SCENARIO:
+Used in dashboard messages, weather apps, OTP validations.
+
+QUICK ANSWER:
+Capture changing text and validate required portion.
+
+
+============================================================
+QUESTION 8: VALUE TYPES VS REFERENCE TYPES
+============================================================
+
+THEORY ANSWER:
+**Primitive types** store actual values directly.
+
+**Objects / Arrays** store **reference**, meaning memory address of actual data.
+
+EXAMPLE PROGRAM:
+
+let a = 10;
+let b = 10;
+
+let arr1 = [1,2];
+let arr2 = [1,2];
+
+console.log(a === b);
+console.log(arr1 === arr2);
+
+OUTPUT:
+
+true
+false
+
+PROGRAM EXPLANATION:
+Numbers compare by value.
+Arrays compare memory references.
+
+REAL-TIME SCENARIO:
+Two API responses may have same data but different object references.
+
+QUICK ANSWER:
+Primitive compares values, objects compare references.
+
+
+============================================================
+QUESTION 9: SINGLE-THREADED BUT NON-BLOCKING
+============================================================
+
+THEORY ANSWER:
+JavaScript runs one task at a time using **Call Stack**.
+
+Timers, API calls, browser events run through **Web APIs** and return using **Event Loop**.
+
+EXAMPLE PROGRAM:
+
+setTimeout(()=>{
+ console.log("Done");
+},2000);
+
+console.log("Start");
+
+OUTPUT:
+
+Start
+Done
+
+PROGRAM EXPLANATION:
+Timer runs separately, next line executes immediately.
+
+REAL-TIME SCENARIO:
+Used in waits, API calls, delayed popups.
+
+QUICK ANSWER:
+Single thread executes code, async tasks handled separately.
+
+
+============================================================
+QUESTION 10: JAVASCRIPT HISTORY / JAVA VS JAVASCRIPT
+============================================================
+
+THEORY ANSWER:
+JavaScript was created in 1995 by Brendan Eich.
+
+Earlier names:
+**Mocha**
+**LiveScript**
+Later renamed to **JavaScript**.
+
+Java and JavaScript are different technologies.
+
+Java = backend / enterprise apps
+JavaScript = web apps / browser automation / Node.js backend
+
+PROGRAM EXPLANATION:
+They only share naming similarity.
+
+REAL-TIME SCENARIO:
+Many experienced testers learn JavaScript for Playwright automation.
+
+QUICK ANSWER:
+JavaScript borrowed the name from Java, but both are different.
