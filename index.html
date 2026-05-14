@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Playwright TypeScript — Interview Prep Guide</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-sec: #f5f5f3;
+    --bg-ter: #eeede9;
+    --text: #1a1a18;
+    --text-sec: #6b6b67;
+    --border: rgba(0,0,0,0.12);
+    --border-sec: rgba(0,0,0,0.22);
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #085041;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-sec: #252523;
+      --bg-ter: #2c2c2a;
+      --text: #f0efe8;
+      --text-sec: #9a9a94;
+      --border: rgba(255,255,255,0.1);
+      --border-sec: rgba(255,255,255,0.2);
+      --green-light: #04342C;
+      --green-dark: #9FE1CB;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-ter);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .page-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .hero h1 { font-size: 28px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .hero p { font-size: 15px; color: var(--text-sec); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 9px 20px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-sec);
+    background: var(--bg);
+    color: var(--text-sec);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover:not(.active) { background: var(--bg-sec); color: var(--text); }
+  .tab-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-size: 13px; color: var(--text-sec); }
+  .badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+  }
+  .badge.all { background: var(--bg-sec); color: var(--text-sec); border-color: var(--border); }
+  .badge.easy { background: #EAF3DE; color: #3B6D11; border-color: #C0DD97; }
+  .badge.mid  { background: #FAEEDA; color: #854F0B; border-color: #FAC775; }
+  .badge.hard { background: #FCEBEB; color: #A32D2D; border-color: #F7C1C1; }
+  .badge.active { outline: 2px solid currentColor; outline-offset: 1px; }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .stat {
+    padding: 6px 14px;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    color: var(--text-sec);
+  }
+  .stat strong { color: var(--text); font-weight: 600; }
+
+  /* PROGRESS */
+  .progress-wrap { height: 4px; background: var(--bg-sec); border-radius: 2px; margin-bottom: 1.5rem; }
+  .progress-bar { height: 4px; background: var(--green); border-radius: 2px; transition: width 0.3s; width: 0%; }
+
+  /* QUESTION CARDS */
+  .q-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .q-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .q-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .q-header:hover { background: var(--bg-sec); }
+
+  .q-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 2px 8px;
+    border-radius: 6px;
+    min-width: 34px;
+    text-align: center;
+  }
+  .q-title { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+  .q-level { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .level-easy { background: #EAF3DE; color: #3B6D11; }
+  .level-mid  { background: #FAEEDA; color: #854F0B; }
+  .level-hard { background: #FCEBEB; color: #A32D2D; }
+  .q-chevron { font-size: 18px; color: var(--text-sec); transition: transform 0.2s; flex-shrink: 0; }
+  .q-chevron.open { transform: rotate(180deg); }
+
+  .q-body {
+    border-top: 0.5px solid var(--border);
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .q-body.open { display: flex; }
+
+  /* SECTIONS */
+  .section { }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-sec);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title i { font-size: 14px; }
+  .section-content { font-size: 13.5px; color: var(--text); line-height: 1.75; }
+
+  /* DOM BOX */
+  .dom-box {
+    background: var(--bg-sec);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.65;
+  }
+
+  /* VISUAL DOM PREVIEW */
+  .dom-section-wrap { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+  .dom-section-wrap .dom-box { flex: 1; min-width: 220px; }
+
+  .browser-preview {
+    flex: 0 0 220px;
+    border: 1.5px solid var(--border-sec);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .browser-bar {
+    background: #e8e8e6;
+    padding: 7px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #d0d0ce;
+  }
+  .browser-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .bd-r { background: #FF5F57; }
+  .bd-y { background: #FFBD2E; }
+  .bd-g { background: #28C840; }
+  .browser-url {
+    flex: 1;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #666;
+    padding: 2px 8px;
+    font-family: monospace;
+    border: 1px solid #d8d8d6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .browser-content {
+    padding: 14px;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    background: #fff;
+  }
+
+  /* Mini UI elements inside preview */
+  .preview-btn {
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: default;
+    border: none;
+  }
+  .preview-btn.primary { background: #1D9E75; color: #fff; }
+  .preview-btn.danger  { background: #E53E3E; color: #fff; }
+  .preview-btn.default { background: #e8e8e6; color: #333; border: 1px solid #ccc; }
+  .preview-btn.outline { background: #fff; color: #1D9E75; border: 1.5px solid #1D9E75; }
+
+  .preview-link { font-size: 12px; color: #1a73e8; text-decoration: underline; cursor: default; }
+  .preview-link.new-tab::after { content: " ↗"; font-size: 10px; }
+
+  .preview-iframe-box {
+    width: 100%;
+    border: 1.5px dashed #aaa;
+    border-radius: 4px;
+    background: #f9f9ff;
+    padding: 8px;
+    font-size: 10px;
+    color: #666;
+    text-align: center;
+  }
+  .preview-iframe-box .iframe-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #999;
+    margin-bottom: 4px;
+  }
+  .preview-iframe-inner {
+    border: 1px solid #cce;
+    border-radius: 3px;
+    padding: 6px;
+    background: #f0f0ff;
+    font-size: 10px;
+    color: #446;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .preview-input {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 11px;
+    background: #fff;
+    color: #333;
+  }
+  .preview-label { font-size: 11px; color: #444; }
+  .preview-popup-hint {
+    font-size: 10px;
+    color: #888;
+    background: #fffbe6;
+    border: 1px solid #f0d060;
+    border-radius: 4px;
+    padding: 4px 8px;
+    width: 100%;
+    text-align: center;
+  }
+  .preview-tabs-row { display: flex; gap: 0; width: 100%; }
+  .preview-tab {
+    flex: 1;
+    padding: 4px 0;
+    font-size: 10px;
+    text-align: center;
+    background: #e8e8e6;
+    border: 1px solid #ccc;
+    color: #555;
+  }
+  .preview-tab.active { background: #fff; border-bottom-color: #fff; color: #1D9E75; font-weight: 600; }
+  .preview-highlight {
+    font-size: 10px;
+    background: #fffbe6;
+    border: 1px dashed #f0c040;
+    border-radius: 4px;
+    padding: 3px 8px;
+    color: #7a5000;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* CODE BOX */
+  .code-box {
+    background: #1e1e1c;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 12.5px;
+    color: #d4d4d0;
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.7;
+    position: relative;
+  }
+  .code-box .kw  { color: #86C1A0; }
+  .code-box .str { color: #FAC775; }
+  .code-box .cm  { color: #6a9955; }
+  .code-box .fn  { color: #85B7EB; }
+
+  /* RECAP */
+  .recap {
+    background: var(--green-light);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--green-dark);
+    line-height: 1.65;
+    font-weight: 500;
+  }
+
+  /* EMPTY */
+  .empty {
+    text-align: center;
+    padding: 4rem 0;
+    font-size: 15px;
+    color: var(--text-sec);
+  }
+
+  /* COPY BUTTON */
+  .code-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -8px;
+  }
+  .copy-btn {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: var(--bg-sec);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-sec);
+    font-family: inherit;
+    transition: all 0.15s;
+    margin-bottom: 4px;
+  }
+  .copy-btn:hover { background: var(--green); color: #fff; border-color: var(--green); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 13px;
+    color: var(--text-sec);
+    padding: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 20px; }
+    .q-title { font-size: 13px; }
+    .tabs { gap: 6px; }
+    .tab-btn { padding: 7px 14px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="hero">
+    <div class="hero-badge">Interview Prep · Playwright TypeScript</div>
+    <h1>Alerts · Frames · Window Handling</h1>
+    <p>30 must-know interview questions — Easy, Mid & Hard — with full explanations</p>
+  </div>
+
+  <div class="tabs" id="topicTabs"></div>
+
+  <div class="filters">
+    <span class="filter-label">Filter by level:</span>
+    <span class="badge all active" onclick="setLevel('all',this)">All levels</span>
+    <span class="badge easy" onclick="setLevel('Easy',this)">Easy</span>
+    <span class="badge mid"  onclick="setLevel('Mid',this)">Mid</span>
+    <span class="badge hard" onclick="setLevel('Hard',this)">Hard</span>
+  </div>
+
+  <div class="stats-row" id="statsBar"></div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="q-list" id="qList"></div>
+
+  <div class="footer">Playwright TypeScript Interview Guide · 30 Questions · 3 Topics</div>
+</div>
+
+<script>
+const DATA = {
+  "Alerts": [
+    {
+      level:"Easy",
+      q:"What is a JavaScript alert in browsers, and how does Playwright handle it?",
+      theory:"An alert is a native browser dialog that blocks page interaction. In Playwright, you handle it using the page.on('dialog', handler) event before triggering the action that opens the alert. The handler receives a Dialog object.",
+      dom:`<!-- Alert triggered by button click -->
+<button id="alertBtn" onclick="alert('Hello!')">
+  Click Me
+</button>`,
+      code:`<span class="kw">import</span> { <span class="fn">test</span>, <span class="fn">expect</span> } <span class="kw">from</span> <span class="str">'@playwright/test'</span>;
+
+<span class="fn">test</span>(<span class="str">'handle simple alert'</span>, <span class="kw">async</span> ({ page }) => {
+  <span class="cm">// Listen BEFORE the action that triggers alert</span>
+  page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> dialog => {
+    <span class="fn">expect</span>(dialog.<span class="fn">message</span>()).<span class="fn">toBe</span>(<span class="str">'Hello!'</span>);
+    <span class="kw">await</span> dialog.<span class="fn">accept</span>(); <span class="cm">// dismiss alert</span>
+  });
+  <span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#alertBtn'</span>);
+});`,
+      explain:"We attach the dialog listener before clicking. When the alert fires, the callback runs — we assert the message and call accept() to dismiss it. If you don't handle it, the test may hang.",
+      scenario:"A banking site shows a confirmation alert before deleting an account. You use dialog.accept() to confirm it in your test.",
+      visual:`<span class="preview-label">Page content:</span><button class="preview-btn primary">Click Me</button><div class="preview-highlight">⚠️ alert('Hello!') fires on click</div>`,
+      recap:"Register page.on('dialog') before triggering the action → accept() or dismiss() inside the handler."
+    },
+    {
+      level:"Easy",
+      q:"What is the difference between alert(), confirm(), and prompt() dialogs in Playwright?",
+      theory:"alert() = OK only. confirm() = OK/Cancel (returns boolean). prompt() = text input + OK/Cancel. Playwright's Dialog object exposes .type() to tell them apart, and .accept(text) to send input for prompts.",
+      dom:`<button onclick="alert('Warning!')">Alert</button>
+<button onclick="confirm('Delete?')">Confirm</button>
+<button onclick="prompt('Enter name:')">Prompt</button>`,
+      code:`page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> dialog => {
+  <span class="kw">const</span> type = dialog.<span class="fn">type</span>(); <span class="cm">// 'alert' | 'confirm' | 'prompt'</span>
+  <span class="kw">if</span> (type === <span class="str">'alert'</span>)
+    <span class="kw">await</span> dialog.<span class="fn">accept</span>();
+  <span class="kw">if</span> (type === <span class="str">'confirm'</span>)
+    <span class="kw">await</span> dialog.<span class="fn">dismiss</span>(); <span class="cm">// Cancel</span>
+  <span class="kw">if</span> (type === <span class="str">'prompt'</span>)
+    <span class="kw">await</span> dialog.<span class="fn">accept</span>(<span class="str">'John'</span>); <span class="cm">// send text input</span>
+});`,
+      explain:"dialog.type() tells you what kind of dialog appeared. For prompts, pass the input string to accept(). For confirm, dismiss() simulates clicking Cancel.",
+      scenario:"A form asks 'Are you sure?' (confirm). In negative test: dismiss(). In positive test: accept().",
+      visual:`<span class="preview-label">Three dialog types:</span><button class="preview-btn danger">Alert</button><button class="preview-btn default">Confirm</button><button class="preview-btn outline">Prompt</button><div class="preview-highlight">dialog.type() → 'alert' | 'confirm' | 'prompt'</div>`,
+      recap:"dialog.type() → 'alert' | 'confirm' | 'prompt'. Use dismiss() for Cancel, accept(text) for prompt input."
+    },
+    {
+      level:"Easy",
+      q:"Why must the dialog listener be registered BEFORE the action that triggers it?",
+      theory:"Playwright operates asynchronously. If the dialog appears before your listener is attached, it auto-accepts and you miss it. Registering with page.on() before the click ensures the event is captured the moment it fires.",
+      dom:`<button id="del" onclick="if(confirm('Sure?')) deleteItem()">
+  Delete
+</button>`,
+      code:`<span class="cm">// ✅ Correct order</span>
+page.<span class="fn">on</span>(<span class="str">'dialog'</span>, d => d.<span class="fn">accept</span>());
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#del'</span>);
+
+<span class="cm">// ❌ Wrong — listener registered too late</span>
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#del'</span>);
+page.<span class="fn">on</span>(<span class="str">'dialog'</span>, d => d.<span class="fn">accept</span>()); <span class="cm">// dialog already gone!</span>`,
+      explain:"page.on() is synchronous registration. The click is async and the dialog may appear while Playwright awaits the click. Listener must be in place first.",
+      scenario:"Test intermittently fails because dialog wasn't caught — caused by listener registered after click. Fix: move listener before click.",
+      visual:`<span class="preview-label">Timing matters:</span><button class="preview-btn danger">Delete</button><div class="preview-highlight">✅ listener → click &nbsp; ❌ click → listener</div>`,
+      recap:"Always: attach listener → then trigger action. Never the reverse."
+    },
+    {
+      level:"Mid",
+      q:"How do you use page.waitForEvent('dialog') instead of page.on() for one-time dialogs?",
+      theory:"page.waitForEvent('dialog') returns a Promise that resolves when the next dialog fires. It's useful for one-time dialogs. You run it concurrently with the action using Promise.all so neither blocks the other.",
+      dom:`<button onclick="alert('Done!')">Save</button>`,
+      code:`<span class="cm">// Both promises run concurrently</span>
+<span class="kw">const</span> [dialog] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'dialog'</span>),
+  page.<span class="fn">click</span>(<span class="str">'button'</span>)
+]);
+
+<span class="fn">expect</span>(dialog.<span class="fn">message</span>()).<span class="fn">toContain</span>(<span class="str">'Done'</span>);
+<span class="kw">await</span> dialog.<span class="fn">accept</span>();`,
+      explain:"Promise.all starts both — waitForEvent waits for the dialog event, click triggers it. They resolve together so the dialog is never missed.",
+      scenario:"A save action alerts 'Saved successfully!' exactly once. waitForEvent is cleaner than a persistent listener.",
+      visual:`<span class="preview-label">One-time dialog:</span><button class="preview-btn primary">Save</button><div class="preview-highlight">Promise.all([waitForEvent, click]) run together</div>`,
+      recap:"Promise.all([waitForEvent('dialog'), triggerAction()]) — concurrent, clean, one-shot."
+    },
+    {
+      level:"Mid",
+      q:"How do you assert the dialog message before accepting it?",
+      theory:"Inside the dialog handler, dialog.message() returns the display text. You assert it before calling accept() or dismiss(). This validates that the correct dialog appeared.",
+      dom:`<button onclick="alert('Deleted 5 records')">Delete All</button>`,
+      code:`page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> dialog => {
+  <span class="cm">// Assert message content</span>
+  <span class="fn">expect</span>(dialog.<span class="fn">message</span>()).<span class="fn">toContain</span>(<span class="str">'Deleted 5 records'</span>);
+  <span class="cm">// Assert dialog type</span>
+  <span class="fn">expect</span>(dialog.<span class="fn">type</span>()).<span class="fn">toBe</span>(<span class="str">'alert'</span>);
+  <span class="kw">await</span> dialog.<span class="fn">accept</span>();
+});
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'button'</span>);`,
+      explain:"dialog.message() exposes the display text. Asserting it ensures the UI shows the correct business message before you proceed.",
+      scenario:"After bulk delete, the system must alert how many records were removed. You assert the count in the message.",
+      visual:`<span class="preview-label">Assert then dismiss:</span><button class="preview-btn danger">Delete All</button><div class="preview-highlight">dialog.message() → 'Deleted 5 records'</div>`,
+      recap:"dialog.message() for text · dialog.type() for kind · assert both before accept/dismiss."
+    },
+    {
+      level:"Mid",
+      q:"How do you handle multiple sequential dialogs in a single test?",
+      theory:"page.on('dialog') fires for every dialog. You can use a counter or array to handle each dialog differently based on order. Alternatively, remove the listener and re-add it between actions.",
+      dom:`<button onclick="alert('Step 1'); confirm('Continue?')">
+  Multi-step
+</button>`,
+      code:`<span class="kw">let</span> count = <span class="str">0</span>;
+page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> dialog => {
+  count++;
+  <span class="kw">if</span> (count === <span class="str">1</span>)
+    <span class="kw">await</span> dialog.<span class="fn">accept</span>();  <span class="cm">// first: alert</span>
+  <span class="kw">if</span> (count === <span class="str">2</span>)
+    <span class="kw">await</span> dialog.<span class="fn">dismiss</span>(); <span class="cm">// second: confirm → Cancel</span>
+});
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'button'</span>);`,
+      explain:"The handler fires sequentially for each dialog. A counter tracks which dialog appeared, allowing different handling per dialog.",
+      scenario:"A multi-step form shows 'Saving…' alert then 'Confirm submit?' confirm. Handle both differently.",
+      visual:`<span class="preview-label">Sequential dialogs:</span><button class="preview-btn default">Multi-step</button><div class="preview-highlight">Dialog 1 → accept() &nbsp; Dialog 2 → dismiss()</div>`,
+      recap:"Use a counter inside page.on() to differentiate multiple sequential dialogs."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle dialogs triggered by page load (beforeunload)?",
+      theory:"The beforeunload event fires when navigating away. Playwright auto-dismisses it by default. To test it, set page.on('dialog') and trigger navigation. The dialog type will be 'beforeunload'.",
+      dom:`<script>
+  window.onbeforeunload = () => 'Changes not saved!';
+&lt;/script>`,
+      code:`page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> dialog => {
+  <span class="fn">expect</span>(dialog.<span class="fn">type</span>()).<span class="fn">toBe</span>(<span class="str">'beforeunload'</span>);
+  <span class="kw">await</span> dialog.<span class="fn">accept</span>(); <span class="cm">// continue navigation</span>
+});
+
+<span class="cm">// Trigger navigation that causes beforeunload</span>
+<span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'https://other-page.com'</span>);`,
+      explain:"Playwright catches beforeunload dialogs like any other. You accept to continue navigation or dismiss to stay on the page (browser-dependent behavior).",
+      scenario:"A content editor warns 'Unsaved changes' when the user tries to leave. Your test verifies this warning appears.",
+      visual:`<span class="preview-label">Navigating away triggers:</span><div class="preview-highlight">⚠️ 'Changes not saved!' — beforeunload event</div><div class="preview-popup-hint">type: 'beforeunload' → accept to leave</div>`,
+      recap:"beforeunload → dialog.type() === 'beforeunload'. Register handler before navigation."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle a dialog inside a popup window?",
+      theory:"Dialogs belong to their page context. For popups, get the Page object for the popup and attach the listener there. Dialogs in iframes bubble to the parent page's dialog event.",
+      dom:`<!-- Popup with alert -->
+<button onclick="window.open('/popup')">Open Popup</button>`,
+      code:`<span class="cm">// Capture popup page</span>
+<span class="kw">const</span> [popup] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'button'</span>)
+]);
+
+<span class="cm">// Attach dialog handler to popup page</span>
+popup.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> d => <span class="kw">await</span> d.<span class="fn">accept</span>());
+<span class="kw">await</span> popup.<span class="fn">click</span>(<span class="str">'#alertInPopup'</span>);`,
+      explain:"Each Page object (including popups) has its own dialog event. You must attach the listener to the correct page — not the parent.",
+      scenario:"An admin panel opens a popup with a warning alert. You intercept the popup page and handle its alert separately.",
+      visual:`<span class="preview-label">Main page:</span><button class="preview-btn default">Open Popup</button><div class="preview-popup-hint">🪟 New popup window → has its own alert</div><div class="preview-highlight">popup.on('dialog') — not page.on()</div>`,
+      recap:"popup.on('dialog') — not page.on(). Dialog events are scoped to their page object."
+    },
+    {
+      level:"Hard",
+      q:"How do you test negative scenarios where a dialog should NOT appear?",
+      theory:"Set a flag inside the dialog handler. If the dialog fires unexpectedly, the flag is set and you fail the test. If no dialog appears within the action, the test passes.",
+      dom:`<button id="safe" onclick="saveWithoutAlert()">Safe Save</button>`,
+      code:`<span class="kw">let</span> dialogFired = <span class="kw">false</span>;
+page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> d => {
+  dialogFired = <span class="kw">true</span>;
+  <span class="kw">await</span> d.<span class="fn">accept</span>(); <span class="cm">// prevent hang</span>
+});
+
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#safe'</span>);
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="str">500</span>);
+<span class="fn">expect</span>(dialogFired).<span class="fn">toBe</span>(<span class="kw">false</span>); <span class="cm">// assert no dialog</span>`,
+      explain:"The flag stays false if no dialog fires. You still call accept inside the handler to prevent test hang if it unexpectedly appears.",
+      scenario:"After fixing a bug where a spurious alert appeared, you write a regression test asserting no dialog fires on save.",
+      visual:`<span class="preview-label">Negative test — no dialog expected:</span><button class="preview-btn primary">Safe Save</button><div class="preview-highlight">✅ dialogFired === false after click</div>`,
+      recap:"Boolean flag + accept() for safety → assert flag is false after action."
+    },
+    {
+      level:"Hard",
+      q:"How does Playwright handle dialogs in headless vs headed mode?",
+      theory:"In headless mode, Playwright auto-dismisses unhandled dialogs (no visible UI). In headed mode, unhandled dialogs may block. Always attach handlers regardless of mode. dialog.defaultValue() returns the default text for prompts.",
+      dom:`<button onclick="let n=prompt('Name:','Guest'); console.log(n)">
+  Prompt
+</button>`,
+      code:`page.<span class="fn">on</span>(<span class="str">'dialog'</span>, <span class="kw">async</span> d => {
+  <span class="cm">// defaultValue is only meaningful for prompts</span>
+  console.<span class="fn">log</span>(d.<span class="fn">defaultValue</span>()); <span class="cm">// 'Guest'</span>
+  <span class="kw">await</span> d.<span class="fn">accept</span>(<span class="str">'Alice'</span>); <span class="cm">// override with custom input</span>
+});`,
+      explain:"Headless auto-dismisses → your test won't fail but won't verify either. Always handle dialogs explicitly. dialog.defaultValue() reveals the pre-filled prompt value.",
+      scenario:"You run tests in CI (headless). Without a dialog handler, the prompt auto-dismisses with empty string, breaking downstream logic.",
+      visual:`<span class="preview-label">Prompt with default value:</span><button class="preview-btn default">Prompt</button><div class="preview-highlight">defaultValue() → 'Guest' &nbsp; accept('Alice') → overrides</div>`,
+      recap:"Always handle dialogs — headless auto-dismiss is silent. defaultValue() = pre-filled prompt text."
+    }
+  ],
+  "Frames": [
+    {
+      level:"Easy",
+      q:"What is an iframe and why is it challenging in Playwright?",
+      theory:"An iframe (inline frame) is an HTML element that embeds another HTML document inside the current page. It runs in a separate browsing context, so Playwright cannot directly query its elements from the parent page — you must locate the frame first.",
+      dom:`<!-- Parent page -->
+<iframe id="payFrame"
+  src="https://payment.example.com/form"
+  width="400" height="300">
+</iframe>`,
+      code:`<span class="cm">// Locate frame by CSS selector</span>
+<span class="kw">const</span> frame = page.<span class="fn">frameLocator</span>(<span class="str">'#payFrame'</span>);
+
+<span class="cm">// Interact inside the frame</span>
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'input[name="card"]'</span>).<span class="fn">fill</span>(<span class="str">'4242424242424242'</span>);
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'button[type="submit"]'</span>).<span class="fn">click</span>();`,
+      explain:"page.frameLocator() returns a FrameLocator — a scoped context inside the iframe. All .locator() calls on it search only inside that frame.",
+      scenario:"A payment widget is embedded in an iframe. You need to fill the card number inside it.",
+      visual:`<span class="preview-label">Page with embedded iframe:</span><div class="preview-iframe-box"><div class="iframe-label">iframe — payment.example.com</div><div class="preview-iframe-inner">💳 <input class="preview-input" style="width:110px" placeholder="Card number" readonly/></div></div><div class="preview-highlight">frameLocator('#payFrame') to enter iframe context</div>`,
+      recap:"frameLocator(selector) → scoped context → locator() works inside frame only."
+    },
+    {
+      level:"Easy",
+      q:"What is the difference between frameLocator() and frame()?",
+      theory:"frameLocator() is the modern Playwright API — it returns a FrameLocator that works with the locator chain (lazy, auto-waits). frame() returns the legacy Frame object found by name/url — useful for advanced frame inspection.",
+      dom:`<iframe name="loginFrame" src="/login"></iframe>`,
+      code:`<span class="cm">// Modern: FrameLocator (recommended)</span>
+<span class="kw">const</span> fl = page.<span class="fn">frameLocator</span>(<span class="str">'iframe[name="loginFrame"]'</span>);
+<span class="kw">await</span> fl.<span class="fn">locator</span>(<span class="str">'#username'</span>).<span class="fn">fill</span>(<span class="str">'admin'</span>);
+
+<span class="cm">// Legacy: Frame object by name attribute</span>
+<span class="kw">const</span> f = page.<span class="fn">frame</span>(<span class="str">'loginFrame'</span>);
+<span class="kw">await</span> f?.<span class="fn">fill</span>(<span class="str">'#username'</span>, <span class="str">'admin'</span>);`,
+      explain:"Use frameLocator() for most cases — it integrates with auto-wait and retry logic. frame() is useful when you need the Frame API (e.g., frame.url(), frame.content()).",
+      scenario:"Most tests use frameLocator(). You use frame() when verifying the iframe's loaded URL.",
+      visual:`<span class="preview-label">iframe with name attribute:</span><div class="preview-iframe-box"><div class="iframe-label">name="loginFrame"</div><div class="preview-iframe-inner"><input class="preview-input" style="width:120px" placeholder="#username" readonly/></div></div><div class="preview-highlight">frameLocator() ← modern &nbsp; frame() ← legacy</div>`,
+      recap:"frameLocator() = modern + locator chain. frame() = legacy + Frame API access."
+    },
+    {
+      level:"Easy",
+      q:"How do you find a frame by URL or name attribute?",
+      theory:"frame() accepts a name string or {url} object. The name matches the iframe's name attribute. URL can be a string, regex, or glob pattern to match the src.",
+      dom:`<iframe name="chatWidget"
+  src="https://chat.example.com/widget">
+</iframe>`,
+      code:`<span class="cm">// By name attribute</span>
+<span class="kw">const</span> byName = page.<span class="fn">frame</span>(<span class="str">'chatWidget'</span>);
+
+<span class="cm">// By URL using regex</span>
+<span class="kw">const</span> byUrl = page.<span class="fn">frame</span>({ url: <span class="str">/chat\.example\.com/</span> });
+
+<span class="cm">// By CSS attribute selector</span>
+<span class="kw">const</span> byAttr = page.<span class="fn">frameLocator</span>(
+  <span class="str">'iframe[src*="chat.example.com"]'</span>
+);`,
+      explain:"Multiple ways to identify frames. CSS attribute selectors like [src*=] are flexible for dynamic URLs. Regex URL matching handles query string variations.",
+      scenario:"A support chat widget iframe loads from a CDN URL. You use regex URL matching since the exact URL varies by session.",
+      visual:`<span class="preview-label">Chat widget iframe:</span><div class="preview-iframe-box"><div class="iframe-label">name="chatWidget" · src*="chat.example.com"</div><div class="preview-iframe-inner">💬 Chat widget content</div></div><div class="preview-highlight">Match by name · URL regex · src attribute</div>`,
+      recap:"frame(name) · frame({url: regex}) · frameLocator('[src*=...]') — three ways to target frames."
+    },
+    {
+      level:"Mid",
+      q:"How do you handle nested iframes (iframe inside iframe)?",
+      theory:"Playwright supports chaining frameLocator() calls. Each call steps one level deeper into the frame hierarchy. You can chain as many as needed for deeply nested frames.",
+      dom:`<!-- Parent page -->
+<iframe id="outer">
+  <!-- Inside outer iframe -->
+  <iframe id="inner">
+    <button>Click Me</button>
+  </iframe>
+</iframe>`,
+      code:`<span class="cm">// Step into outer frame</span>
+<span class="kw">const</span> outerFrame = page.<span class="fn">frameLocator</span>(<span class="str">'#outer'</span>);
+
+<span class="cm">// Step into inner frame from outer</span>
+<span class="kw">const</span> innerFrame = outerFrame.<span class="fn">frameLocator</span>(<span class="str">'#inner'</span>);
+
+<span class="cm">// Now interact inside the inner frame</span>
+<span class="kw">await</span> innerFrame.<span class="fn">locator</span>(<span class="str">'button'</span>).<span class="fn">click</span>();`,
+      explain:"frameLocator can be chained because FrameLocator also exposes a frameLocator() method. Each call dives one frame deeper.",
+      scenario:"An analytics dashboard embeds a reporting iframe which itself contains a chart frame with export controls.",
+      visual:`<span class="preview-label">Nested iframes:</span><div class="preview-iframe-box" style="border-color:#4a90d9"><div class="iframe-label">outer #outer</div><div class="preview-iframe-box" style="margin:4px 0;border-color:#9b59b6"><div class="iframe-label">inner #inner</div><button class="preview-btn primary" style="font-size:10px;padding:4px 10px">Click Me</button></div></div><div class="preview-highlight">frameLocator('#outer').frameLocator('#inner')</div>`,
+      recap:"outerFL.frameLocator('#inner').locator('el') — chain for nested frames."
+    },
+    {
+      level:"Mid",
+      q:"How do you list all frames on a page and iterate them?",
+      theory:"page.frames() returns an array of all Frame objects currently attached to the page. You can filter by URL, name, or other attributes to find specific frames.",
+      dom:`<iframe src="/frame1"></iframe>
+<iframe src="/frame2"></iframe>
+<iframe name="special" src="/frame3"></iframe>`,
+      code:`<span class="cm">// Get all frames (index 0 = main page)</span>
+<span class="kw">const</span> allFrames = page.<span class="fn">frames</span>();
+console.<span class="fn">log</span>(allFrames.<span class="fn">length</span>); <span class="cm">// 4: main + 3 iframes</span>
+
+<span class="cm">// Filter by URL pattern</span>
+<span class="kw">const</span> found = allFrames.<span class="fn">find</span>(f =>
+  f.<span class="fn">url</span>().<span class="fn">includes</span>(<span class="str">'frame2'</span>)
+);
+<span class="kw">await</span> found?.<span class="fn">click</span>(<span class="str">'button'</span>);`,
+      explain:"page.frames()[0] is always the main frame. Additional frames are child iframes. .url() and .name() help identify them programmatically.",
+      scenario:"A page has dynamically generated iframes with unpredictable IDs. You iterate frames and match by URL.",
+      visual:`<span class="preview-label">Multiple iframes on page:</span><div class="preview-iframe-box" style="font-size:10px;padding:4px 8px">📄 /frame1</div><div class="preview-iframe-box" style="font-size:10px;padding:4px 8px">📄 /frame2 ← matched by URL</div><div class="preview-iframe-box" style="font-size:10px;padding:4px 8px">📄 /frame3 (name="special")</div><div class="preview-highlight">page.frames() → array of all Frame objects</div>`,
+      recap:"page.frames() → array. Index 0 = main frame. Filter by .url() or .name()."
+    },
+    {
+      level:"Mid",
+      q:"How do you wait for a frame to load before interacting with it?",
+      theory:"frameLocator() auto-waits for the frame to be attached and for elements inside it to appear. If the iframe loads dynamically (via JS), wait for its selector to appear using waitForSelector first.",
+      dom:`<button id="load">Load Frame</button>
+<!-- iframe appears after click -->
+<div id="container"></div>`,
+      code:`<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#load'</span>);
+
+<span class="cm">// Wait for iframe to appear in DOM</span>
+<span class="kw">await</span> page.<span class="fn">waitForSelector</span>(<span class="str">'iframe#dynamicFrame'</span>);
+
+<span class="cm">// frameLocator auto-waits for element inside</span>
+<span class="kw">const</span> frame = page.<span class="fn">frameLocator</span>(<span class="str">'#dynamicFrame'</span>);
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'#submit'</span>).<span class="fn">waitFor</span>();
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'#submit'</span>).<span class="fn">click</span>();`,
+      explain:"waitForSelector ensures the iframe element exists in the DOM. Then frameLocator's locator auto-waits for the inner element to be ready.",
+      scenario:"A lazy-loaded payment iframe only appears after clicking 'Checkout'. You wait for it before interacting.",
+      visual:`<span class="preview-label">Dynamic iframe load:</span><button class="preview-btn primary" style="font-size:11px">Load Frame</button><div class="preview-iframe-box" style="margin-top:6px"><div class="iframe-label">iframe appears after click ↓</div><div class="preview-iframe-inner"><button class="preview-btn default" style="font-size:10px">Submit</button></div></div><div class="preview-highlight">waitForSelector → frameLocator → .waitFor()</div>`,
+      recap:"waitForSelector for iframe DOM presence → frameLocator auto-waits for inner elements."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle cross-origin iframes in Playwright?",
+      theory:"Playwright handles cross-origin iframes the same as same-origin ones via frameLocator(). However, JavaScript-based access (like page.evaluate crossing into the frame) is blocked by CORS. Playwright's native locators bypass this restriction.",
+      dom:`<!-- Cross-origin payment iframe -->
+<iframe src="https://stripe.com/elements/card"
+  id="stripeFrame">
+</iframe>`,
+      code:`<span class="cm">// Playwright native API — works across origins ✅</span>
+<span class="kw">const</span> stripe = page.<span class="fn">frameLocator</span>(<span class="str">'#stripeFrame'</span>);
+<span class="kw">await</span> stripe.<span class="fn">locator</span>(<span class="str">'[name="cardnumber"]'</span>).<span class="fn">fill</span>(<span class="str">'4242 4242 4242 4242'</span>);
+
+<span class="cm">// ❌ FAILS for cross-origin (CORS restriction)</span>
+<span class="kw">const</span> f = page.<span class="fn">frames</span>().<span class="fn">find</span>(f => f.<span class="fn">url</span>().<span class="fn">includes</span>(<span class="str">'stripe'</span>));
+<span class="kw">await</span> f?.<span class="fn">evaluate</span>(() => document.<span class="fn">title</span>); <span class="cm">// CORS error</span>`,
+      explain:"Playwright's CDP-based commands bypass same-origin restrictions for automation. JavaScript eval across origins is blocked by the browser's CORS policy, but locator interactions work fine.",
+      scenario:"Stripe payment elements load in cross-origin iframes. frameLocator fills card details without CORS issues.",
+      visual:`<span class="preview-label">Cross-origin iframe (Stripe):</span><div class="preview-iframe-box" style="border-color:#635BFF"><div class="iframe-label">🔒 stripe.com — cross-origin</div><div class="preview-iframe-inner"><input class="preview-input" style="width:130px" placeholder="Card number" readonly/></div></div><div class="preview-highlight">frameLocator() ✅ &nbsp; frame.evaluate() ❌ CORS</div>`,
+      recap:"frameLocator() works cross-origin. frame.evaluate() across origins fails (CORS). Use native locators."
+    },
+    {
+      level:"Hard",
+      q:"How do you extract text content from inside a frame?",
+      theory:"Use frameLocator to scope your locator, then call textContent(), innerText(), or getAttribute() on the located element inside the frame.",
+      dom:`<iframe id="report">
+  <div id="total">$1,234.56</div>
+  <table id="dataTable">...</table>
+</iframe>`,
+      code:`<span class="kw">const</span> frame = page.<span class="fn">frameLocator</span>(<span class="str">'#report'</span>);
+
+<span class="cm">// Extract text content from element</span>
+<span class="kw">const</span> total = <span class="kw">await</span> frame
+  .<span class="fn">locator</span>(<span class="str">'#total'</span>)
+  .<span class="fn">textContent</span>();
+<span class="fn">expect</span>(total).<span class="fn">toBe</span>(<span class="str">'$1,234.56'</span>);
+
+<span class="cm">// Count rows inside frame</span>
+<span class="kw">const</span> rows = <span class="kw">await</span> frame
+  .<span class="fn">locator</span>(<span class="str">'#dataTable tr'</span>)
+  .<span class="fn">count</span>();`,
+      explain:"All standard locator methods (textContent, count, getAttribute, etc.) work inside FrameLocator just like on the main page.",
+      scenario:"A report iframe shows financial totals. You verify the displayed amount matches expected data.",
+      visual:`<span class="preview-label">Report iframe with data:</span><div class="preview-iframe-box"><div class="iframe-label">iframe#report</div><div style="font-size:13px;font-weight:700;color:#1D9E75;margin:4px 0">$1,234.56</div><div style="font-size:10px;color:#888">| Row 1 | Row 2 | Row 3 |</div></div><div class="preview-highlight">frameLocator.locator('#total').textContent()</div>`,
+      recap:"frameLocator('...').locator('el').textContent() — same API as main page, scoped to frame."
+    },
+    {
+      level:"Hard",
+      q:"How do you take a screenshot of just an iframe's content?",
+      theory:"You can screenshot a specific element using locator.screenshot(). To screenshot the iframe itself, locate the iframe element on the parent page and call screenshot() on it. Or use page.screenshot() with a clip region.",
+      dom:`<iframe id="chartFrame" src="/chart"></iframe>`,
+      code:`<span class="cm">// Screenshot the iframe element</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'#chartFrame'</span>)
+  .<span class="fn">screenshot</span>({ path: <span class="str">'chart.png'</span> });
+
+<span class="cm">// Or: get bounding box and clip</span>
+<span class="kw">const</span> box = <span class="kw">await</span> page
+  .<span class="fn">locator</span>(<span class="str">'#chartFrame'</span>)
+  .<span class="fn">boundingBox</span>();
+<span class="kw">await</span> page.<span class="fn">screenshot</span>({
+  path: <span class="str">'frame.png'</span>,
+  clip: box!
+});`,
+      explain:"locator('#chartFrame').screenshot() captures the rendered iframe element from the parent's perspective. This captures the embedded content visually.",
+      scenario:"A charting iframe generates dynamic graphs. You capture a screenshot for visual regression testing.",
+      visual:`<span class="preview-label">Chart iframe for screenshot:</span><div class="preview-iframe-box" style="border-color:#1D9E75"><div class="iframe-label">iframe#chartFrame</div><div style="font-size:20px;text-align:center;padding:6px 0">📊</div><div style="font-size:10px;color:#888;text-align:center">Dynamic chart</div></div><div class="preview-highlight">locator('iframe').screenshot({ path: 'chart.png' })</div>`,
+      recap:"locator('iframe').screenshot() OR page.screenshot({clip: boundingBox}) to capture frame visually."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle frames that reload or update dynamically?",
+      theory:"When an iframe reloads (src changes or content refreshes), the old FrameLocator reference stays valid because frameLocator() is lazy — it re-resolves the frame on each action. However, Frame objects (from frame()) may become detached.",
+      dom:`<iframe id="liveData" src="/feed?t=0"></iframe>
+<button id="refresh" onclick="refreshFrame()">Refresh</button>`,
+      code:`<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#refresh'</span>);
+
+<span class="cm">// frameLocator re-resolves automatically ✅</span>
+<span class="kw">const</span> frame = page.<span class="fn">frameLocator</span>(<span class="str">'#liveData'</span>);
+
+<span class="cm">// Wait for new content after reload</span>
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'#newData'</span>).<span class="fn">waitFor</span>();
+<span class="kw">const</span> value = <span class="kw">await</span> frame
+  .<span class="fn">locator</span>(<span class="str">'#newData'</span>)
+  .<span class="fn">textContent</span>();`,
+      explain:"frameLocator is lazy (evaluated at action time), so it always finds the current frame. Legacy Frame objects go stale — avoid caching them across reloads.",
+      scenario:"A stock ticker iframe refreshes every 5 seconds. You click Refresh and wait for updated values without re-creating the frameLocator.",
+      visual:`<span class="preview-label">Live data iframe + refresh:</span><div class="preview-iframe-box"><div class="iframe-label">iframe#liveData — reloads on click</div><div style="font-size:11px;color:#1D9E75;padding:4px 0">📈 Updated value: $482.10</div></div><button class="preview-btn default" style="font-size:10px">Refresh</button><div class="preview-highlight">frameLocator is lazy → re-resolves after reload</div>`,
+      recap:"frameLocator is lazy → survives frame reloads. Legacy Frame objects → go stale after reload."
+    }
+  ],
+  "Window Handling": [
+    {
+      level:"Easy",
+      q:"How does Playwright handle new browser windows/tabs?",
+      theory:"In Playwright, a new tab or window is represented as a new Page object. When an action opens a new tab, you capture it using the 'popup' event on the current page. You then interact with it like any other page.",
+      dom:`<a href="/report" target="_blank">Open Report</a>
+<!-- or -->
+<button onclick="window.open('/report')">Open</button>`,
+      code:`<span class="cm">// Capture new tab opened by click</span>
+<span class="kw">const</span> [newPage] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'a[target="_blank"]'</span>)
+]);
+
+<span class="kw">await</span> newPage.<span class="fn">waitForLoadState</span>();
+console.<span class="fn">log</span>(<span class="kw">await</span> newPage.<span class="fn">title</span>());`,
+      explain:"page.waitForEvent('popup') resolves with the new Page when a popup/tab opens. Promise.all ensures both the wait and click start together.",
+      scenario:"A reports button opens a PDF viewer in a new tab. You capture the new tab and verify its URL contains '.pdf'.",
+      visual:`<span class="preview-label">Link opens new tab:</span><a class="preview-link new-tab">Open Report</a><div class="preview-popup-hint">🪟 New tab opens → captured as new Page</div><div class="preview-highlight">waitForEvent('popup') → Page object</div>`,
+      recap:"Promise.all([waitForEvent('popup'), triggerAction()]) → new Page object."
+    },
+    {
+      level:"Easy",
+      q:"How do you switch between multiple open tabs?",
+      theory:"In Playwright, all pages are managed through the BrowserContext. context.pages() returns all open Page objects. You switch by simply using the relevant Page reference — no driver.switchTo() like Selenium.",
+      dom:`<a target="_blank" href="/tab2">Tab 2</a>
+<a target="_blank" href="/tab3">Tab 3</a>`,
+      code:`<span class="cm">// Open a new tab</span>
+<span class="kw">const</span> [tab2] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  context.<span class="fn">waitForEvent</span>(<span class="str">'page'</span>),
+  page.<span class="fn">click</span>(<span class="str">'a:first-child'</span>)
+]);
+
+<span class="cm">// All pages in context</span>
+<span class="kw">const</span> allPages = context.<span class="fn">pages</span>();
+console.<span class="fn">log</span>(allPages.<span class="fn">length</span>); <span class="cm">// 2</span>
+
+<span class="cm">// "Switch" = just use the reference</span>
+<span class="kw">await</span> tab2.<span class="fn">locator</span>(<span class="str">'h1'</span>).<span class="fn">textContent</span>();`,
+      explain:"No explicit switch needed. Each page has its own reference. context.pages() lists all. Just call methods on the page you want.",
+      scenario:"After opening a comparison tab, you alternate between original and new tab to verify data consistency.",
+      visual:`<span class="preview-label">Multiple open tabs:</span><div class="preview-tabs-row"><div class="preview-tab active">Tab 1 (main)</div><div class="preview-tab">Tab 2</div><div class="preview-tab">Tab 3</div></div><div class="preview-highlight">context.pages() → [page1, page2, page3]</div>`,
+      recap:"context.pages() → all Page objects. Use page reference directly — no switchTo() in Playwright."
+    },
+    {
+      level:"Easy",
+      q:"How do you close a specific tab and continue on another?",
+      theory:"Call page.close() on the Page object you want to close. The BrowserContext and other pages remain active. You can then continue using other page references.",
+      dom:`<button onclick="window.open('/preview', '_blank')">
+  Preview
+</button>`,
+      code:`<span class="kw">const</span> [preview] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'button'</span>)
+]);
+
+<span class="cm">// Verify something on preview tab</span>
+<span class="fn">expect</span>(<span class="kw">await</span> preview.<span class="fn">title</span>()).<span class="fn">toContain</span>(<span class="str">'Preview'</span>);
+
+<span class="cm">// Close preview and return to main</span>
+<span class="kw">await</span> preview.<span class="fn">close</span>();
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'#confirm'</span>).<span class="fn">click</span>(); <span class="cm">// back on main</span>`,
+      explain:"preview.close() closes only that tab. The main page continues as normal. You resume using the original page reference.",
+      scenario:"Test opens a print preview tab, verifies content, then closes it and clicks 'Done' on the main page.",
+      visual:`<span class="preview-label">Close popup, back to main:</span><button class="preview-btn default">Preview</button><div class="preview-popup-hint">🪟 Preview tab opens → verify → close()</div><div class="preview-highlight">preview.close() → continue on main page</div>`,
+      recap:"page.close() on popup → main page reference still valid → continue on main."
+    },
+    {
+      level:"Mid",
+      q:"How do you listen for new page events on BrowserContext vs Page?",
+      theory:"page.on('popup') fires only for popups opened by that specific page. context.on('page') fires for ALL new pages in the context regardless of which page opened them. Use context-level for global monitoring.",
+      dom:`<!-- Any page in context -->
+<a target="_blank">Open from any page</a>`,
+      code:`<span class="cm">// Page-level: only popups from THIS page</span>
+page.<span class="fn">on</span>(<span class="str">'popup'</span>, <span class="kw">async</span> newPg => {
+  console.<span class="fn">log</span>(<span class="str">'popup from THIS page'</span>);
+});
+
+<span class="cm">// Context-level: ANY new page in context</span>
+context.<span class="fn">on</span>(<span class="str">'page'</span>, <span class="kw">async</span> newPg => {
+  <span class="kw">await</span> newPg.<span class="fn">waitForLoadState</span>();
+  console.<span class="fn">log</span>(<span class="str">'URL:'</span>, newPg.<span class="fn">url</span>());
+});`,
+      explain:"page-level popup is scoped. context-level page fires globally. Use context.on('page') when you don't know which page will spawn the new one.",
+      scenario:"A dashboard has multiple sections each opening reports in new tabs. You use context.on('page') to auto-handle any new tab globally.",
+      visual:`<span class="preview-label">Context vs Page scope:</span><div class="preview-highlight" style="background:#e8f4ff;border-color:#80c0ff;color:#004080">context.on('page') — catches ALL new pages</div><div class="preview-highlight" style="margin-top:4px">page.on('popup') — only from THIS page</div>`,
+      recap:"page.on('popup') = scoped. context.on('page') = global for all new pages in context."
+    },
+    {
+      level:"Mid",
+      q:"How do you verify the URL of a newly opened tab?",
+      theory:"After capturing the new Page via waitForEvent, call page.url() to get its URL. Use waitForLoadState() first to ensure the page has navigated to its final URL.",
+      dom:`<a href="https://docs.example.com" target="_blank">
+  Documentation
+</a>`,
+      code:`<span class="kw">const</span> [docsPage] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'a'</span>)
+]);
+
+<span class="cm">// Wait for navigation to complete</span>
+<span class="kw">await</span> docsPage.<span class="fn">waitForLoadState</span>(<span class="str">'domcontentloaded'</span>);
+
+<span class="fn">expect</span>(docsPage.<span class="fn">url</span>()).<span class="fn">toContain</span>(<span class="str">'docs.example.com'</span>);
+<span class="fn">expect</span>(docsPage.<span class="fn">url</span>()).<span class="fn">toMatch</span>(<span class="str">/docs\.example\.com/</span>);`,
+      explain:"waitForLoadState ensures the tab is past the initial about:blank state. Then url() gives the final navigated URL.",
+      scenario:"A 'Help' link must open the correct documentation URL in a new tab. You verify it doesn't open the wrong section.",
+      visual:`<span class="preview-label">Verify new tab URL:</span><a class="preview-link new-tab">Documentation</a><div class="preview-popup-hint">🪟 docs.example.com opens</div><div class="preview-highlight">waitForLoadState() → page.url() → expect()</div>`,
+      recap:"waitForLoadState() first → then page.url() to verify final URL."
+    },
+    {
+      level:"Mid",
+      q:"How do you handle a popup that requires cookies from the parent session?",
+      theory:"Popups opened via window.open() from the same origin inherit the parent page's cookies and session — they share the same BrowserContext. So you don't need to log in again in the popup.",
+      dom:`<button onclick="window.open('/admin-report')">
+  Open Report (Admin Only)
+</button>`,
+      code:`<span class="cm">// Parent page logs in first</span>
+<span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/login'</span>);
+<span class="kw">await</span> page.<span class="fn">fill</span>(<span class="str">'#user'</span>, <span class="str">'admin'</span>);
+<span class="kw">await</span> page.<span class="fn">fill</span>(<span class="str">'#pass'</span>, <span class="str">'secret'</span>);
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'#login'</span>);
+
+<span class="cm">// Popup inherits session — no re-login needed</span>
+<span class="kw">const</span> [report] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'button'</span>)
+]);
+<span class="kw">await</span> report.<span class="fn">waitForLoadState</span>();
+<span class="cm">// Admin report loads automatically</span>`,
+      explain:"BrowserContext shares cookies across all pages. Admin session cookies are present in the popup automatically.",
+      scenario:"An admin report popup must be accessible only when logged in. Test verifies the popup loads the protected report without a second login.",
+      visual:`<span class="preview-label">Admin popup shares session:</span><button class="preview-btn primary">Open Report</button><div class="preview-popup-hint">🔑 Logged-in cookie → shared with popup</div><div class="preview-highlight">Same BrowserContext = shared cookies</div>`,
+      recap:"Pages in same context share cookies/session. Popups from authenticated pages are auto-authenticated."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle window.open() with specific window features (size, position)?",
+      theory:"Playwright captures the popup Page regardless of window features passed to window.open(). The window features (width, height, position) affect the browser UI but Playwright's Page API works the same. You can set viewport on the new page.",
+      dom:`<button onclick="window.open('/map','_blank',
+  'width=800,height=600,top=100,left=100')">
+  Open Map
+</button>`,
+      code:`<span class="kw">const</span> [mapPage] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'button'</span>)
+]);
+
+<span class="cm">// Set viewport to match expected size</span>
+<span class="kw">await</span> mapPage.<span class="fn">setViewportSize</span>({ width: <span class="str">800</span>, height: <span class="str">600</span> });
+<span class="kw">await</span> mapPage.<span class="fn">waitForLoadState</span>();
+
+<span class="kw">await</span> mapPage.<span class="fn">locator</span>(<span class="str">'#searchBox'</span>).<span class="fn">fill</span>(<span class="str">'Chennai'</span>);`,
+      explain:"window.open features are a hint to the browser. Playwright captures the Page regardless. You can explicitly set viewport if the app layout depends on window size.",
+      scenario:"A map popup renders differently at 800x600. You set viewport to match expected size before interacting with map controls.",
+      visual:`<span class="preview-label">Sized popup window:</span><button class="preview-btn default">Open Map</button><div class="preview-popup-hint">🗺️ window.open('/map', '_blank', 'width=800,height=600')</div><div class="preview-highlight">setViewportSize({width:800, height:600})</div>`,
+      recap:"Popup captured regardless of window features. Use setViewportSize() to match expected dimensions."
+    },
+    {
+      level:"Hard",
+      q:"How do you test data passed between parent and popup window (window.opener)?",
+      theory:"window.opener gives the popup access to the parent window's context. In Playwright, you can use page.evaluate() on both pages to test cross-window data exchange, as they share the same BrowserContext.",
+      dom:`<!-- Parent sets data on child window -->
+<script>
+  let win = window.open('/child');
+  win.sharedData = { userId: 42 };
+&lt;/script>`,
+      code:`<span class="kw">const</span> [child] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">evaluate</span>(() => <span class="fn">window.open</span>(<span class="str">'/child'</span>))
+]);
+<span class="kw">await</span> child.<span class="fn">waitForLoadState</span>();
+
+<span class="cm">// Verify child can access opener</span>
+<span class="kw">const</span> openerExists = <span class="kw">await</span> child.<span class="fn">evaluate</span>(
+  () => <span class="fn">!!window.opener</span>
+);
+<span class="fn">expect</span>(openerExists).<span class="fn">toBe</span>(<span class="kw">true</span>);`,
+      explain:"page.evaluate() runs JS in the page context. In same-origin windows, window.opener references the parent. You can verify cross-window communication works.",
+      scenario:"A popup receives a token from the parent window via window.opener. Test verifies the token is correctly passed and processed.",
+      visual:`<span class="preview-label">Parent ↔ Child communication:</span><div style="display:flex;gap:8px;width:100%"><div class="preview-iframe-box" style="flex:1"><div class="iframe-label">Parent window</div><div style="font-size:10px">userId: 42</div></div><div style="align-self:center;font-size:14px">↔</div><div class="preview-iframe-box" style="flex:1"><div class="iframe-label">Child (popup)</div><div style="font-size:10px">window.opener ✅</div></div></div><div class="preview-highlight">child.evaluate(() => !!window.opener)</div>`,
+      recap:"page.evaluate(() => window.opener) verifies parent-child window link. Works same-origin only."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle multiple popups opening simultaneously?",
+      theory:"Use context.on('page') to collect all new pages as they open. Store them in an array and process after all popups are ready. Avoid page.waitForEvent('popup') for multiple simultaneous popups.",
+      dom:`<button onclick="openAll()">Open All Reports</button>
+<script>
+  function openAll() {
+    window.open('/r1');
+    window.open('/r2');
+    window.open('/r3');
+  }
+&lt;/script>`,
+      code:`<span class="kw">const</span> newPages = [];
+context.<span class="fn">on</span>(<span class="str">'page'</span>, p => newPages.<span class="fn">push</span>(p));
+
+<span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'button'</span>);
+
+<span class="cm">// Wait briefly for all popups to open</span>
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="str">1000</span>);
+
+<span class="cm">// Wait for all to load</span>
+<span class="kw">await</span> Promise.<span class="fn">all</span>(
+  newPages.<span class="fn">map</span>(p => p.<span class="fn">waitForLoadState</span>())
+);
+<span class="fn">expect</span>(newPages.<span class="fn">length</span>).<span class="fn">toBe</span>(<span class="str">3</span>);`,
+      explain:"context.on('page') collects all new pages as they arrive. Then Promise.all waits for all to load. More reliable than multiple waitForEvent calls.",
+      scenario:"A bulk export feature opens 3 separate report tabs at once. You verify all three open and load correctly.",
+      visual:`<span class="preview-label">3 popups at once:</span><button class="preview-btn default">Open All Reports</button><div style="display:flex;gap:4px;margin-top:6px"><div class="preview-iframe-box" style="flex:1;padding:4px;font-size:10px">🪟 /r1</div><div class="preview-iframe-box" style="flex:1;padding:4px;font-size:10px">🪟 /r2</div><div class="preview-iframe-box" style="flex:1;padding:4px;font-size:10px">🪟 /r3</div></div><div class="preview-highlight">context.on('page') collects all 3</div>`,
+      recap:"context.on('page') + push to array → wait all with Promise.all(pages.map(p => p.waitForLoadState()))."
+    },
+    {
+      level:"Hard",
+      q:"How do you handle OAuth popups (third-party auth windows)?",
+      theory:"OAuth flows open a popup for the provider (Google, GitHub). You capture the popup, interact with the login form inside it, and after completion, the popup closes and the parent receives the auth token.",
+      dom:`<button id="googleLogin">
+  Login with Google
+</button>
+<!-- Opens accounts.google.com popup -->`,
+      code:`<span class="kw">const</span> [oauthPopup] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  page.<span class="fn">waitForEvent</span>(<span class="str">'popup'</span>),
+  page.<span class="fn">click</span>(<span class="str">'#googleLogin'</span>)
+]);
+
+<span class="kw">await</span> oauthPopup.<span class="fn">waitForLoadState</span>();
+<span class="kw">await</span> oauthPopup.<span class="fn">fill</span>(<span class="str">'input[type="email"]'</span>, <span class="str">'test@gmail.com'</span>);
+<span class="kw">await</span> oauthPopup.<span class="fn">click</span>(<span class="str">'#identifierNext'</span>);
+
+<span class="cm">// Wait for popup to close after auth</span>
+<span class="kw">await</span> oauthPopup.<span class="fn">waitForEvent</span>(<span class="str">'close'</span>);
+
+<span class="cm">// Verify parent received the session</span>
+<span class="kw">await</span> page.<span class="fn">locator</span>(<span class="str">'#userAvatar'</span>).<span class="fn">waitFor</span>();`,
+      explain:"Capture the OAuth popup, fill credentials, and wait for it to close. Then verify the parent page received the session. Use storageState for CI instead of real credentials.",
+      scenario:"Social login test: capture Google OAuth popup, fill test credentials, wait for popup close, assert user is logged in on parent page.",
+      visual:`<span class="preview-label">OAuth login popup:</span><button class="preview-btn" style="background:#4285F4;color:#fff;font-size:11px">G Login with Google</button><div class="preview-popup-hint">🪟 accounts.google.com popup opens</div><div class="preview-highlight">Fill → submit → waitForEvent('close') → verify session</div>`,
+      recap:"waitForEvent('popup') → interact with OAuth form → waitForEvent('close') → verify parent session."
+    }
+  ]
+};
+
+let currentTopic = "Alerts";
+let currentLevel = "all";
+const openCards = new Set();
+
+function renderTabs() {
+  const container = document.getElementById("topicTabs");
+  container.innerHTML = "";
+  Object.keys(DATA).forEach(t => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (t === currentTopic ? " active" : "");
+    btn.textContent = t + " (" + DATA[t].length + " Q)";
+    btn.onclick = () => { currentTopic = t; openCards.clear(); renderAll(); };
+    container.appendChild(btn);
+  });
+}
+
+function setLevel(level, el) {
+  currentLevel = level;
+  document.querySelectorAll(".badge").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+  renderAll();
+}
+
+function toggleCard(id, header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector(".q-chevron");
+  if (openCards.has(id)) {
+    openCards.delete(id);
+    body.classList.remove("open");
+    chevron.classList.remove("open");
+  } else {
+    openCards.add(id);
+    body.classList.add("open");
+    chevron.classList.add("open");
+  }
+  updateStats();
+}
+
+function copyCode(btn, code) {
+  const plain = code.replace(/<[^>]+>/g, "");
+  navigator.clipboard.writeText(plain).then(() => {
+    btn.textContent = "Copied!";
+    setTimeout(() => btn.textContent = "Copy", 1500);
+  });
+}
+
+function renderAll() {
+  renderTabs();
+  const qs = DATA[currentTopic].filter(q => currentLevel === "all" || q.level === currentLevel);
+  const qList = document.getElementById("qList");
+  qList.innerHTML = "";
+
+  if (qs.length === 0) {
+    qList.innerHTML = '<div class="empty"><i class="ti ti-mood-empty" style="font-size:32px;display:block;margin-bottom:8px;"></i>No questions for this filter.</div>';
+    updateStats();
+    return;
+  }
+
+  qs.forEach((q, i) => {
+    const card = document.createElement("div");
+    card.className = "q-card";
+    const id = currentTopic + "_" + i;
+    const isOpen = openCards.has(id);
+    card.innerHTML = `
+      <div class="q-header" onclick="toggleCard('${id}', this)">
+        <span class="q-num">Q${i+1}</span>
+        <span class="q-title">${q.q}</span>
+        <span class="q-level level-${q.level.toLowerCase()}">${q.level}</span>
+        <i class="ti ti-chevron-down q-chevron${isOpen ? " open" : ""}"></i>
+      </div>
+      <div class="q-body${isOpen ? " open" : ""}">
+        <div class="section">
+          <div class="section-title"><i class="ti ti-book"></i> Theory — what it is</div>
+          <div class="section-content">${q.theory}</div>
+        </div>
+        <div class="section">
+          <div class="section-title"><i class="ti ti-layout-dashboard"></i> Live DOM preview &amp; HTML structure</div>
+          <div class="dom-section-wrap">
+            <div class="browser-preview">
+              <div class="browser-bar">
+                <div class="browser-dot bd-r"></div>
+                <div class="browser-dot bd-y"></div>
+                <div class="browser-dot bd-g"></div>
+                <div class="browser-url">localhost:3000</div>
+              </div>
+              <div class="browser-content">${q.visual}</div>
+            </div>
+            <div class="dom-box">${q.dom}</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-title"><i class="ti ti-terminal-2"></i> Playwright code</div>
+          <div class="code-header">
+            <button class="copy-btn" onclick="copyCode(this, \`${q.code.replace(/`/g,'\\`')}\`)">Copy</button>
+          </div>
+          <div class="code-box">${q.code}</div>
+        </div>
+        <div class="section">
+          <div class="section-title"><i class="ti ti-bulb"></i> Code explanation</div>
+          <div class="section-content">${q.explain}</div>
+        </div>
+        <div class="section">
+          <div class="section-title"><i class="ti ti-building-skyscraper"></i> Real-time scenario</div>
+          <div class="section-content">${q.scenario}</div>
+        </div>
+        <div class="section">
+          <div class="section-title"><i class="ti ti-bolt"></i> Quick recap</div>
+          <div class="recap">${q.recap}</div>
+        </div>
+      </div>`;
+    qList.appendChild(card);
+  });
+  updateStats();
+}
+
+function updateStats() {
+  const qs = DATA[currentTopic].filter(q => currentLevel === "all" || q.level === currentLevel);
+  const total = qs.length;
+  const viewed = openCards.size;
+  const pct = total ? Math.round((viewed / total) * 100) : 0;
+  document.getElementById("progressBar").style.width = pct + "%";
+
+  const all = DATA[currentTopic];
+  const easy = all.filter(q => q.level === "Easy").length;
+  const mid  = all.filter(q => q.level === "Mid").length;
+  const hard = all.filter(q => q.level === "Hard").length;
+
+  document.getElementById("statsBar").innerHTML =
+    `<div class="stat"><strong>${total}</strong> shown</div>
+     <div class="stat"><strong>${easy}</strong> Easy</div>
+     <div class="stat"><strong>${mid}</strong> Mid</div>
+     <div class="stat"><strong>${hard}</strong> Hard</div>
+     <div class="stat"><strong>${pct}%</strong> reviewed</div>`;
+}
+
+renderAll();
+</script>
+</body>
+</html>
